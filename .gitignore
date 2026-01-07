@@ -1,0 +1,35 @@
+# Virtual environments
+venv/
+.venv/
+env/
+ENV/
+
+# Python caches
+__pycache__/
+*.py[cod]
+
+# Jupyter
+.ipynb_checkpoints/
+
+# OS / Editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Logs & temp
+*.log
+*.tmp
+
+# Data artifacts (Spark/Delta/Parquet)
+data/processed/
+_delta_log/
+*.parquet
+
+# Optional: raw data if generated locally
+data/raw/*.csv
+
+# Packages / builds
+dist/
+build/
+*.egg-info/
