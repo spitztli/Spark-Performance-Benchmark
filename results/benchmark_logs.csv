@@ -11,3 +11,9 @@ timestamp,test_name,description,duration_seconds,data_size_mb,throughput_mbps,st
 2026-01-07 23:03:35,CSV - Select 2 Columns,Read only customer_id and amount columns,14.786,,,SUCCESS,
 2026-01-07 23:03:38,Parquet - Select 2 Columns,Read only customer_id and amount columns,0.922,,,SUCCESS,
 2026-01-07 23:03:41,Delta - Select 2 Columns,Read only customer_id and amount columns,1.142,,,SUCCESS,
+2026-01-07 23:13:50,Sort-Merge Join (Parquet),Join fact_transactions with dim_accounts using Sort-Merge,46.128,,,SUCCESS,
+2026-01-07 23:14:03,Broadcast Hash Join (Parquet),Join with broadcast hint on dim_accounts,0.455,,,FAILED,name 'broadcast' is not defined
+2026-01-07 23:17:06,Broadcast Hash Join (Parquet),Join with broadcast hint on dim_accounts,24.528,,,SUCCESS,
+2026-01-07 23:19:34,Broadcast Hash Join (Delta Z-Ordered),Join with Z-Ordered Delta table,10.155,,,FAILED,name 'broadcast' is not defined
+2026-01-07 23:21:53,Broadcast Hash Join (Delta Z-Ordered),Join with Z-Ordered Delta table,25.667,,,SUCCESS,
+2026-01-07 23:22:33,Sort-Merge Join (Delta Z-Ordered),Sort-Merge with Z-Ordered Delta table,24.906,,,SUCCESS,
