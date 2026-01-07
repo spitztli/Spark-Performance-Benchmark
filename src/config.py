@@ -9,6 +9,7 @@ Date: 2025-12-08
 """
 
 import os
+import sys
 from pathlib import Path
 from typing import Final
 
@@ -113,6 +114,79 @@ def get_data_path(format_type: str, table_name: str) -> Path:
     return format_dirs[format_type] / table_name
 
 
+def configure_hadoop_home() -> None:
+    """
+    Configure HADOOP_HOME environment variable for Windows.
+    
+    This function is essential for running Spark on Windows. Spark uses Hadoop
+    libraries internally, which require native Windows binaries (winutils.exe, hadoop.dll).
+    
+    The function:
+    1. Checks if HADOOP_HOME is already set
+    2. If not, sets it to C:\\hadoop (default location)
+    3. Verifies that required binaries exist
+    4. Sets the environment variable for the current Python process
+    
+    This MUST be called BEFORE creating a SparkSession.
+    
+    Returns:
+        None
+        
+    Raises:
+        FileNotFoundError: If Hadoop binaries are not found in the expected location
+        
+    Example:
+        >>> configure_hadoop_home()
+        ✓ HADOOP_HOME configured: C:\\hadoop
+    """
+    # Check if HADOOP_HOME is already set
+    hadoop_home = os.environ.get('HADOOP_HOME')
+    
+    if hadoop_home:
+        print(f"✓ HADOOP_HOME already set: {hadoop_home}")
+    else:
+        # Set default Hadoop home for Windows
+        if sys.platform == 'win32':
+            default_hadoop_home = r'C:\hadoop'
+            
+            # Check if the directory exists
+            hadoop_path = Path(default_hadoop_home)
+            if not hadoop_path.exists():
+                print(f"⚠️  WARNING: Hadoop directory not found at {default_hadoop_home}")
+                print("   Spark may encounter errors when writing files.")
+                print("\n   To fix this:")
+                print("   1. Download Hadoop winutils from: https://github.com/cdarlint/winutils")
+                print("   2. Extract to C:\\hadoop")
+                print("   3. Ensure winutils.exe and hadoop.dll are in C:\\hadoop\\bin\\")
+                return
+            
+            # Check for required binaries
+            bin_path = hadoop_path / 'bin'
+            winutils_path = bin_path / 'winutils.exe'
+            hadoop_dll_path = bin_path / 'hadoop.dll'
+            
+            if not winutils_path.exists():
+                raise FileNotFoundError(
+                    f"winutils.exe not found at {winutils_path}\n"
+                    f"Please download Hadoop binaries and place them in {bin_path}"
+                )
+            
+            if not hadoop_dll_path.exists():
+                raise FileNotFoundError(
+                    f"hadoop.dll not found at {hadoop_dll_path}\n"
+                    f"Please download Hadoop binaries and place them in {bin_path}"
+                )
+            
+            # Set the environment variable
+            os.environ['HADOOP_HOME'] = default_hadoop_home
+            print(f"✓ HADOOP_HOME configured: {default_hadoop_home}")
+            print(f"✓ Found winutils.exe: {winutils_path}")
+            print(f"✓ Found hadoop.dll: {hadoop_dll_path}")
+        else:
+            # Non-Windows systems don't need this
+            print("ℹ️  HADOOP_HOME configuration skipped (not Windows)")
+
+
 # Initialize directories when module is imported
 ensure_directories_exist()
 
@@ -130,4 +204,9 @@ if __name__ == "__main__":
     print(f"  - CSV: {CSV_DATA_DIR}")
     print(f"  - Parquet: {PARQUET_DATA_DIR}")
     print(f"  - Delta: {DELTA_DATA_DIR}")
+    
+    print("\n" + "=" * 60)
+    print("Testing Hadoop Configuration:")
+    print("=" * 60)
+    configure_hadoop_home()
     print("\n" + "=" * 60)
