@@ -11,6 +11,13 @@
 
 ---
 
+## GitHub 
+https://github.com/spitztli/Spark-Performance-Benchmark
+
+## Datenbeschaffung
+https://www.kaggle.com/datasets/ealaxi/paysim1
+
+
 ## 1. Projektbeschreibung
 
 Dieses Projekt untersucht die Performance-Unterschiede moderner Big Data Dateiformate und Optimierungsstrategien in Apache Spark. Ziel ist es, quantitativ zu belegen, wie sich physikalische Speicherformate (CSV, Parquet, Delta Lake) und logische Ausführungspläne (Join-Strategien) auf die Laufzeit von ETL-Prozessen auswirken.
